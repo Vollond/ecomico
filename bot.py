@@ -9,7 +9,7 @@ conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cursor = conn.cursor()
  
 # Выполняем запрос.
-cursor.execute("SELECT * FROM table_name")
+cursor.execute("SELECT * FROM users")
 row = cursor.fetchone()
  
 bot = telebot.TeleBot(config.token)
@@ -19,7 +19,7 @@ def repeat_all_messages(message): # Название функции не игр�
     bot.send_message(message.chat.id, message.text)
     bot.send_message(message.chat.id, "1213")
     bot.send_message(message.chat.id, row)
-
+print(row)
 
 if __name__ == '__main__':
      bot.polling(none_stop=True)
