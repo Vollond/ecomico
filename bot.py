@@ -2,13 +2,7 @@ import config
 import telebot
 import os
 import psycopg2
-from flask import Flask, request
 import logging
-
-
-TOKEN = 
-import os
-
 import requests
 from telegram.ext import RegexHandler, Updater
 
