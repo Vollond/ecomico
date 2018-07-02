@@ -1,0 +1,1 @@
+@"d:\bots\economicon\ecomico\scripts\python.exe" "d:\bots\economicon\ecomico\Scripts\markdown_py" %*
