@@ -5,47 +5,34 @@ import psycopg2
 from flask import Flask, request
 import logging
 
-bot = telebot.TeleBot(config.token)
 
-DATABASE_URL = os.environ['DATABASE_URL']
-
-conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-cursor = conn.cursor()
- 
-# Выполняем запрос.
-cursor.execute("SELECT * FROM users")
-row = cursor.fetchone()
-
-
-@bot.message_handler(content_types=["text"])
-def repeat_all_messages(message): # Название функции не играет никакой роли, в принципе
-    bot.send_message(message.chat.id, message.text)
-    bot.send_message(message.chat.id, "1213")
-    bot.send_message(message.chat.id, row)
-    print(row)
-
-
-logger = telebot.logger
-telebot.logger.setLevel(logging.INFO)
+TOKEN = config.token
+bot = telebot.TeleBot(TOKEN)
 server = Flask(__name__)
-@server.route("/bot", methods=['POST'])
+
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
+
+
+@bot.message_handler(func=lambda message: True, content_types=['text'])
+def echo_message(message):
+    bot.reply_to(message, message.text)
+
+
+@server.route('/' + TOKEN, methods=['POST'])
 def getMessage():
     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
     return "!", 200
+
+
 @server.route("/")
 def webhook():
     bot.remove_webhook()
-    bot.set_webhook(url="https://ecomico.herokuapp.com/bot") # этот url нужно заменить на url вашего Хероку приложения
-    return "?", 200
-server.run(host="0.0.0.0", port=os.environ.get('PORT', 80))
- 
- 
- 
+    bot.set_webhook(url='https://your_heroku_project.com/' + TOKEN)
+    return "!", 200
 
 
-
-
-
-# Закрываем подключение.
-cursor.close()
-conn.close()
+if __name__ == "__main__":
+    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
