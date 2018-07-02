@@ -2,8 +2,9 @@ import config
 import telebot
 import os
 import psycopg2
-import Updater
 from telegram.ext import Updater
+from flask import Flask, request
+import logging
 print("123")
 DATABASE_URL = os.environ['DATABASE_URL']
 
