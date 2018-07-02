@@ -12,6 +12,19 @@ cursor = conn.cursor()
 cursor.execute("SELECT * FROM users")
 row = cursor.fetchone()
  
+ 
+TOKEN = config.token
+PORT = int(os.environ.get('PORT', '8443'))
+updater = Updater(TOKEN)
+# add handlers
+updater.start_webhook(listen="0.0.0.0",
+                      port=PORT,
+                      url_path=TOKEN)
+updater.bot.set_webhook("https://ecomico.herokuapp.com/" + TOKEN)
+updater.idle() 
+ 
+ 
+ 
 bot = telebot.TeleBot(config.token)
 
 @bot.message_handler(content_types=["text"])
@@ -21,9 +34,7 @@ def repeat_all_messages(message): # Название функции не игр�
     bot.send_message(message.chat.id, row)
 print(row)
 
-if __name__ == '__main__':
-     bot.polling(none_stop=True)
-	 
+
 # Закрываем подключение.
 cursor.close()
 conn.close()
