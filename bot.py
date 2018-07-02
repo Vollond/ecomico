@@ -2,7 +2,6 @@ import config
 import telebot
 import os
 import psycopg2
-from telegram.ext import Updater
 from flask import Flask, request
 import logging
 print("123")
