@@ -16,6 +16,15 @@ cursor = conn.cursor()
 cursor.execute("SELECT * FROM users")
 row = cursor.fetchone()
 
+
+@bot.message_handler(content_types=["text"])
+def repeat_all_messages(message): # Название функции не играет никакой роли, в принципе
+    bot.send_message(message.chat.id, message.text)
+    bot.send_message(message.chat.id, "1213")
+    bot.send_message(message.chat.id, row)
+    print(row)
+
+
 logger = telebot.logger
 telebot.logger.setLevel(logging.INFO)
 server = Flask(__name__)
@@ -34,12 +43,7 @@ server.run(host="0.0.0.0", port=os.environ.get('PORT', 80))
  
 
 
-@bot.message_handler(content_types=["text"])
-def repeat_all_messages(message): # Название функции не играет никакой роли, в принципе
-    bot.send_message(message.chat.id, message.text)
-    bot.send_message(message.chat.id, "1213")
-    bot.send_message(message.chat.id, row)
-print(row)
+
 
 
 # Закрываем подключение.
