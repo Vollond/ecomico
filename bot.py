@@ -6,33 +6,48 @@ from flask import Flask, request
 import logging
 
 
-TOKEN = config.token
-bot = telebot.TeleBot(TOKEN)
-server = Flask(__name__)
+TOKEN = 
+import os
+
+import requests
+from telegram.ext import RegexHandler, Updater
+
+from config import URL, PORT
+from utils import format_thousands
 
 
-@bot.message_handler(commands=['start'])
-def start(message):
-    bot.reply_to(message, 'Hello, ' + message.from_user.first_name)
+class Bot:
+    def __init__(self, token, debug=False):
+        self._token = token
+        self._updater = Updater(token)
+        self._debug = debug
 
+        self._session = requests.Session()
 
-@bot.message_handler(func=lambda message: True, content_types=['text'])
-def echo_message(message):
-    bot.reply_to(message, message.text)
+        self._init_handlers()
+    
+    def run(self):
+        self._updater.start_webhook(listen='0.0.0.0', port=PORT,
+                                    url_path=self._token)
+        self._updater.bot.set_webhook(URL + self._token)
+        self._updater.idle()
+    
+    def _init_handlers(self):
+        self._updater.dispatcher.add_handler(
+            RegexHandler("^/([a-z_]+)$", self._get_currency_price,
+                         pass_groups=True))
 
+    def _get_currency_price(self, bot, update, groups):
+        currency = groups[0]
+    
+        info = self._get_info(currency.replace("_", "-"))
+    
+        text = "Current {} price - ${}".format(info["name"], format_thousands(info["price_usd"], sep=" "))
+    
+        bot.send_message(chat_id=update.message.chat_id, text=text)
+    
+    def _get_info(self, name):
+        url = "https://api.coinmarketcap.com/v1/ticker/{}"
 
-@server.route('/' + TOKEN, methods=['POST'])
-def getMessage():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-    return "!", 200
-
-
-@server.route("/")
-def webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url='https://your_heroku_project.com/' + TOKEN)
-    return "!", 200
-
-
-if __name__ == "__main__":
-    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
+        response = self._session.get(url.format(name))
+        return response.json()[0]
