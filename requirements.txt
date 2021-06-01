@@ -35,7 +35,7 @@ telegram==0.0.1
 telepot==12.7
 tensorflow==1.4.0
 tensorflow-tensorboard==0.4.0rc3
-urllib3==1.22
+urllib3==1.26.5
 virtualenv==15.1.0
 virtualenv-clone==0.3.0
 Werkzeug==0.14.1
