@@ -22,7 +22,7 @@ numpy==1.13.3
 olefile==0.44
 Pillow==4.3.0
 pipenv==2018.7.1
-protobuf==3.5.0.post1
+protobuf==3.18.3
 psycopg2==2.7.5
 pyTelegramBotAPI==3.6.3
 python-telegram-bot==10.1.0
